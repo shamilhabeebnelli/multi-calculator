@@ -1,4 +1,4 @@
-/* Nelli Tools — EMI, currency (via keraladaily), bill split, age, units. */
+/* EMI Calculator — EMI, currency (via keraladaily), bill split, age, units. */
 (function () {
   "use strict";
   function $(id) { return document.getElementById(id); }
@@ -123,7 +123,7 @@
     var rs = function (x) { return "Rs " + fmt(Math.round(x)); };
     var when = new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata", day: "numeric", month: "short", year: "numeric", hour: "numeric", minute: "2-digit" });
     var lines = [
-      ["Nelli Tools - EMI quote", 18, 1],
+      ["EMI Calculator - customer quote", 18, 1],
       ["denelli - " + when + " IST", 9],
       ["", 8],
       ["Loan amount: " + rs(inp.base), 11],
@@ -147,7 +147,7 @@
     });
     lines.push(["", 6]);
     lines.push(["Insurance is financed into the loan above. SC, DBD, PC and CC are upfront, not in the EMI.", 8]);
-    lines.push(["Made with Nelli Tools - denelli - copyright strictly prohibited", 8]);
+    lines.push(["Made with EMI Calculator - denelli - copyright strictly prohibited", 8]);
     var blob = new Blob([pdfMake(lines)], { type: "application/pdf" });
     var a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
