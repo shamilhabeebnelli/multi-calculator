@@ -58,18 +58,18 @@
   function emiCalc() {
     var inp = emiInputs();
     if (inp.P <= 0 || inp.n <= 0) {
-      $("nt-emi-emi").textContent = "â"; $("nt-emi-int").textContent = "â";
-      $("nt-emi-tot").textContent = "â"; $("nt-emi-table").innerHTML = "";
-      $("nt-emi-up").textContent = "â"; $("nt-emi-loan").textContent = "â";
+      $("nt-emi-emi").textContent = "—"; $("nt-emi-int").textContent = "—";
+      $("nt-emi-tot").textContent = "—"; $("nt-emi-table").innerHTML = "";
+      $("nt-emi-up").textContent = "—"; $("nt-emi-loan").textContent = "—";
       $("nt-emi-mixp").style.width = "0"; $("nt-emi-mixi").style.width = "0";
       return;
     }
     var c = emiCompute(inp.P, inp.annual, inp.n);
-    $("nt-emi-emi").textContent = "â¹" + fmt(Math.round(c.emi));
-    $("nt-emi-int").textContent = "â¹" + fmt(Math.round(c.interest));
-    $("nt-emi-tot").textContent = "â¹" + fmt(Math.round(c.total));
-    $("nt-emi-up").textContent = "â¹" + fmt(Math.round(inp.upfront));
-    $("nt-emi-loan").textContent = "â¹" + fmt(Math.round(inp.P));
+    $("nt-emi-emi").textContent = "₹" + fmt(Math.round(c.emi));
+    $("nt-emi-int").textContent = "₹" + fmt(Math.round(c.interest));
+    $("nt-emi-tot").textContent = "₹" + fmt(Math.round(c.total));
+    $("nt-emi-up").textContent = "₹" + fmt(Math.round(inp.upfront));
+    $("nt-emi-loan").textContent = "₹" + fmt(Math.round(inp.P));
     var pp = c.total > 0 ? (inp.P / c.total) * 100 : 0;
     $("nt-emi-mixp").style.width = pp + "%";
     $("nt-emi-mixi").style.width = (100 - pp) + "%";
@@ -77,8 +77,8 @@
     // year-wise amortization
     var rows = ["<tr><th>Year</th><th>Principal paid</th><th>Interest paid</th><th>Balance</th></tr>"];
     c.rows.forEach(function (rw) {
-      rows.push("<tr><td>" + rw.year + "</td><td>â¹" + fmt(Math.round(rw.p)) +
-        "</td><td>â¹" + fmt(Math.round(rw.i)) + "</td><td>â¹" + fmt(Math.round(rw.bal)) + "</td></tr>");
+      rows.push("<tr><td>" + rw.year + "</td><td>₹" + fmt(Math.round(rw.p)) +
+        "</td><td>₹" + fmt(Math.round(rw.i)) + "</td><td>₹" + fmt(Math.round(rw.bal)) + "</td></tr>");
     });
     $("nt-emi-table").innerHTML = rows.join("");
   }
@@ -201,8 +201,8 @@
     var inM = $("nt-ac-unit").value === "m";
     var sqft = l * w * (inM ? 10.7639 : 1);
     if (sqft <= 0) {
-      $("nt-ac-area").textContent = "â"; $("nt-ac-ton").textContent = "â";
-      $("nt-ac-btu").textContent = "â"; $("nt-ac-note").textContent = "";
+      $("nt-ac-area").textContent = "—"; $("nt-ac-ton").textContent = "—";
+      $("nt-ac-btu").textContent = "—"; $("nt-ac-note").textContent = "";
       return;
     }
     var sqm = sqft / 10.7639;
@@ -213,9 +213,9 @@
     else if (sqft <= 300) { pick = 2; }
     else if (sqft <= 400) { pick = 2.5; }
     else { pick = 3; }
-    $("nt-ac-area").textContent = fmt(Math.round(sqft)) + " sq ft (" + sqm.toFixed(1) + " mÂ²)";
+    $("nt-ac-area").textContent = fmt(Math.round(sqft)) + " sq ft (" + sqm.toFixed(1) + " m²)";
     $("nt-ac-ton").textContent = pick + " ton" + (sqft > 400 ? " (or split units)" : "");
-    $("nt-ac-btu").textContent = "â" + fmt(pick * 12000) + " BTU/hr";
+    $("nt-ac-btu").textContent = "≈" + fmt(pick * 12000) + " BTU/hr";
     $("nt-ac-note").textContent = "Chart: up to 120 sq ft = 1 ton, 120-180 = 1.5 ton, 180-300 = 2 ton (Haier India guide). Go a size up for top floor, harsh sunlight, more than 3 people or heat-making appliances. Floor area alone is not an exact cooling load - confirm with the brand chart before quoting.";
   }
   ["nt-ac-l", "nt-ac-w"].forEach(function (id) { $(id).addEventListener("input", acCalc); });
@@ -237,12 +237,12 @@
     from.value = "INR"; to.value = rates.USD ? "USD" : "INR";
   }
   function curConvert() {
-    if (!rates) { $("nt-cur-out").textContent = "â"; return; }
+    if (!rates) { $("nt-cur-out").textContent = "—"; return; }
     var amt = parseFloat($("nt-cur-amt").value) || 0;
     var f = $("nt-cur-from").value, t = $("nt-cur-to").value;
     var rf = f === "INR" ? 1 : rates[f];
     var rt = t === "INR" ? 1 : rates[t];
-    if (!rf || !rt) { $("nt-cur-out").textContent = "â"; return; }
+    if (!rf || !rt) { $("nt-cur-out").textContent = "—"; return; }
     var inINR = amt / rf;
     var out = inINR * rt;
     $("nt-cur-out").textContent = fmt(out, 4) + " " + t;
@@ -269,14 +269,14 @@
       if (dm) rateDate = dm[1];
       var rebuilt = (json.generated_at || "").replace(/:\d{2} IST$/, " IST");
       try { localStorage.setItem("ntRatesV1", JSON.stringify({ r: r, at: json.generated_at })); } catch (e) {}
-      useRates(r, "latest snapshot Â· rates dated " + rateDate + " Â· rebuilt " + (rebuilt || "recently") + " Â· keraladaily");
+      useRates(r, "latest snapshot · rates dated " + rateDate + " · rebuilt " + (rebuilt || "recently") + " · keraladaily");
     }).catch(function () {
       var cached = null;
       try { cached = JSON.parse(localStorage.getItem("ntRatesV1") || "null"); } catch (e) {}
       if (cached && cached.r) {
-        useRates(cached.r, "offline â showing cached rates from " + (cached.at || "earlier"));
+        useRates(cached.r, "offline — showing cached rates from " + (cached.at || "earlier"));
       } else {
-        note.textContent = "rates unavailable right now â check your connection and reload";
+        note.textContent = "rates unavailable right now — check your connection and reload";
       }
     });
   }
@@ -291,9 +291,9 @@
     var n = parseInt($("nt-sp-n").value, 10) || 1;
     var tipAmt = amt * tip / 100;
     var tot = amt + tipAmt;
-    $("nt-sp-each").textContent = "â¹" + fmt(Math.ceil(tot / n));
-    $("nt-sp-tipt").textContent = "â¹" + fmt(Math.round(tipAmt));
-    $("nt-sp-tot").textContent = "â¹" + fmt(Math.round(tot));
+    $("nt-sp-each").textContent = "₹" + fmt(Math.ceil(tot / n));
+    $("nt-sp-tipt").textContent = "₹" + fmt(Math.round(tipAmt));
+    $("nt-sp-tot").textContent = "₹" + fmt(Math.round(tot));
   }
   ["nt-sp-amt", "nt-sp-tip", "nt-sp-n"].forEach(function (id) {
     $(id).addEventListener("input", splitCalc);
@@ -306,7 +306,7 @@
     var dob = new Date(v + "T00:00:00");
     var now = new Date();
     if (isNaN(dob) || dob > now) {
-      $("nt-age-main").textContent = "â"; return;
+      $("nt-age-main").textContent = "—"; return;
     }
     var y = now.getFullYear() - dob.getFullYear();
     var m = now.getMonth() - dob.getMonth();
@@ -350,7 +350,7 @@
     var cat = $("nt-un-cat").value;
     var f = $("nt-un-from").value, t = $("nt-un-to").value;
     var v = parseFloat($("nt-un-val").value);
-    if (isNaN(v)) { $("nt-un-out").textContent = "â"; return; }
+    if (isNaN(v)) { $("nt-un-out").textContent = "—"; return; }
     var out;
     if (cat === "temp") { out = fromC(toC(v, f), t); }
     else { out = v * UNITS[cat][f] / UNITS[cat][t]; }
