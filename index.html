@@ -6,7 +6,7 @@
 <title>Multi Calculator - EMI, currency, split, age, units, AC</title>
 <meta name="description" content="Free tools: EMI calculator with amortization, live INR currency converter, bill splitter, age calculator, unit converter.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%236d28d9'/%3E%3Ctext x='32' y='44' font-size='36' font-family='Arial' font-weight='bold' fill='white' text-anchor='middle'%3EN%3C/text%3E%3C/svg%3E">
-<link rel="stylesheet" href="style.css?v=5">
+<link rel="stylesheet" href="style.css?v=6">
 </head>
 <body>
 <header class="nt-top">
@@ -14,7 +14,7 @@
     <div class="nt-logo">N</div>
     <div>
       <h1 class="nt-title">Multi Calculator</h1>
-      <p class="nt-sub">Calculators and converters that just work â free, no signup</p>
+      <p class="nt-sub">Calculators and converters that just work — free, no signup</p>
     </div>
   </div>
 </header>
@@ -33,26 +33,26 @@
   <section class="nt-card nt-tool nt-show" id="nt-emi">
     <h2>EMI calculator</h2>
     <div class="nt-row3">
-      <label>Loan amount â¹<input id="nt-emi-p" type="number" min="0" value="100000"></label>
+      <label>Loan amount ₹<input id="nt-emi-p" type="number" min="0" value="100000"></label>
       <label>Interest % / year<input id="nt-emi-r" type="number" min="0" step="0.1" value="10.5"></label>
       <label>Tenure (months)<input id="nt-emi-n" type="number" min="1" value="24"></label>
     </div>
     <div class="nt-row3">
-      <label>Service charge â¹<input id="nt-emi-sc" type="number" min="0" value="0"></label>
-      <label>DBD â¹<input id="nt-emi-dbd" type="number" min="0" value="0"></label>
-      <label>Processing charge â¹<input id="nt-emi-pc" type="number" min="0" value="0"></label>
-      <label>Card charge â¹<input id="nt-emi-cc" type="number" min="0" value="0"></label>
-      <label>Insurance â¹ (in EMI)<input id="nt-emi-ins" type="number" min="0" value="0"></label>
+      <label>Service charge ₹<input id="nt-emi-sc" type="number" min="0" value="0"></label>
+      <label>DBD ₹<input id="nt-emi-dbd" type="number" min="0" value="0"></label>
+      <label>Processing charge ₹<input id="nt-emi-pc" type="number" min="0" value="0"></label>
+      <label>Card charge ₹<input id="nt-emi-cc" type="number" min="0" value="0"></label>
+      <label>Insurance ₹ (in EMI)<input id="nt-emi-ins" type="number" min="0" value="0"></label>
     </div>
     <p class="nt-note">SC, DBD, processing and card charges add to the downpayment. Insurance is financed: added to the loan, so it spreads across the EMI.</p>
     <div class="nt-out3">
-      <div class="nt-out"><span>Monthly EMI</span><strong id="nt-emi-emi">â</strong></div>
-      <div class="nt-out"><span>Total interest</span><strong id="nt-emi-int">â</strong></div>
-      <div class="nt-out"><span>Total payment</span><strong id="nt-emi-tot">â</strong></div>
+      <div class="nt-out"><span>Monthly EMI</span><strong id="nt-emi-emi">—</strong></div>
+      <div class="nt-out"><span>Total interest</span><strong id="nt-emi-int">—</strong></div>
+      <div class="nt-out"><span>Total payment</span><strong id="nt-emi-tot">—</strong></div>
     </div>
     <div class="nt-out3 nt-out3b">
-      <div class="nt-out"><span>Downpayment (SC+DBD+PC+CC)</span><strong id="nt-emi-up">â</strong></div>
-      <div class="nt-out"><span>Loan incl. insurance</span><strong id="nt-emi-loan">â</strong></div>
+      <div class="nt-out"><span>Downpayment (SC+DBD+PC+CC)</span><strong id="nt-emi-up">—</strong></div>
+      <div class="nt-out"><span>Loan incl. insurance</span><strong id="nt-emi-loan">—</strong></div>
     </div>
     <button class="nt-btn" id="nt-emi-pdf" type="button">Save as PDF</button>
     <div class="nt-mixwrap"><div class="nt-mix nt-mixp" id="nt-emi-mixp"></div><div class="nt-mix nt-mixi" id="nt-emi-mixi"></div></div>
@@ -66,27 +66,27 @@
 
   <section class="nt-card nt-tool" id="nt-cur">
     <h2>Currency converter</h2>
-    <p class="nt-note" id="nt-cur-note">loading latest INR rates from keraladailyâ¦</p>
+    <p class="nt-note" id="nt-cur-note">loading latest INR rates from keraladaily…</p>
     <div class="nt-row3">
       <label>Amount<input id="nt-cur-amt" type="number" min="0" step="0.01" value="1000"></label>
       <label>From<select id="nt-cur-from"></select></label>
       <label>To<select id="nt-cur-to"></select></label>
     </div>
-    <div class="nt-big" id="nt-cur-out">â</div>
+    <div class="nt-big" id="nt-cur-out">—</div>
     <div class="nt-rate" id="nt-cur-rate"></div>
   </section>
 
   <section class="nt-card nt-tool" id="nt-split">
     <h2>Bill splitter</h2>
     <div class="nt-row3">
-      <label>Bill amount â¹<input id="nt-sp-amt" type="number" min="0" step="0.01" value="1200"></label>
+      <label>Bill amount ₹<input id="nt-sp-amt" type="number" min="0" step="0.01" value="1200"></label>
       <label>Tip %<input id="nt-sp-tip" type="number" min="0" step="1" value="5"></label>
       <label>People<input id="nt-sp-n" type="number" min="1" step="1" value="4"></label>
     </div>
     <div class="nt-out3">
-      <div class="nt-out"><span>Each pays</span><strong id="nt-sp-each">â</strong></div>
-      <div class="nt-out"><span>Tip total</span><strong id="nt-sp-tipt">â</strong></div>
-      <div class="nt-out"><span>Grand total</span><strong id="nt-sp-tot">â</strong></div>
+      <div class="nt-out"><span>Each pays</span><strong id="nt-sp-each">—</strong></div>
+      <div class="nt-out"><span>Tip total</span><strong id="nt-sp-tipt">—</strong></div>
+      <div class="nt-out"><span>Grand total</span><strong id="nt-sp-tot">—</strong></div>
     </div>
   </section>
 
@@ -96,9 +96,9 @@
       <label>Date of birth<input id="nt-age-dob" type="date" value="2002-03-12"></label>
     </div>
     <div class="nt-out3">
-      <div class="nt-out"><span>Age</span><strong id="nt-age-main">â</strong></div>
-      <div class="nt-out"><span>Total days</span><strong id="nt-age-days">â</strong></div>
-      <div class="nt-out"><span>Born on</span><strong id="nt-age-wd">â</strong></div>
+      <div class="nt-out"><span>Age</span><strong id="nt-age-main">—</strong></div>
+      <div class="nt-out"><span>Total days</span><strong id="nt-age-days">—</strong></div>
+      <div class="nt-out"><span>Born on</span><strong id="nt-age-wd">—</strong></div>
     </div>
     <p class="nt-note" id="nt-age-next"></p>
   </section>
@@ -117,7 +117,7 @@
     <div class="nt-row3">
       <label>Value<input id="nt-un-val" type="number" step="any" value="1"></label>
     </div>
-    <div class="nt-big" id="nt-un-out">â</div>
+    <div class="nt-big" id="nt-un-out">—</div>
   </section>
 
   <section class="nt-card nt-tool" id="nt-ac">
@@ -131,9 +131,9 @@
       </select></label>
     </div>
     <div class="nt-out3">
-      <div class="nt-out"><span>Room area</span><strong id="nt-ac-area">â</strong></div>
-      <div class="nt-out"><span>Suggested AC</span><strong id="nt-ac-ton">â</strong></div>
-      <div class="nt-out"><span>Cooling need</span><strong id="nt-ac-btu">â</strong></div>
+      <div class="nt-out"><span>Room area</span><strong id="nt-ac-area">—</strong></div>
+      <div class="nt-out"><span>Suggested AC</span><strong id="nt-ac-ton">—</strong></div>
+      <div class="nt-out"><span>Cooling need</span><strong id="nt-ac-btu">—</strong></div>
     </div>
     <p class="nt-note" id="nt-ac-note"></p>
   </section>
@@ -145,6 +145,6 @@
   <p>Multi Calculator &middot; currency data from <a href="https://keralafortune.denelli.in/">keraladaily</a> &middot; &copy; 2026 denelli &middot; copyright strictly prohibited</p>
 </footer>
 
-<script src="app.js?v=6"></script>
+<script src="app.js?v=7"></script>
 </body>
 </html>
