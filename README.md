@@ -21,3 +21,4 @@ Plain HTML/CSS/JS, no dependencies. Deployed to GitHub Pages by a GitHub
 Actions workflow on every push.
 
 Â© 2026 denelli Â· copyright strictly prohibited
+ 
