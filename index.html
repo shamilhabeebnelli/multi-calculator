@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nelli Tools — EMI, currency, split, age, units</title>
+<meta name="description" content="Free tools: EMI calculator with amortization, live INR currency converter, bill splitter, age calculator, unit converter.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%236d28d9'/%3E%3Ctext x='32' y='44' font-size='36' font-family='Arial' font-weight='bold' fill='white' text-anchor='middle'%3EN%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="nt-top">
+  <div class="nt-topin">
+    <div class="nt-logo">N</div>
+    <div>
+      <h1 class="nt-title">Nelli Tools</h1>
+      <p class="nt-sub">Calculators and converters that just work — free, no signup</p>
+    </div>
+  </div>
+</header>
+
+<nav class="nt-nav" id="nt-nav">
+  <button class="nt-tab nt-active" data-nttool="emi">EMI</button>
+  <button class="nt-tab" data-nttool="cur">Currency</button>
+  <button class="nt-tab" data-nttool="split">Bill split</button>
+  <button class="nt-tab" data-nttool="age">Age</button>
+  <button class="nt-tab" data-nttool="unit">Units</button>
+</nav>
+
+<main class="nt-main">
+
+  <section class="nt-card nt-tool nt-show" id="nt-emi">
+    <h2>EMI calculator</h2>
+    <div class="nt-row3">
+      <label>Loan amount ₹<input id="nt-emi-p" type="number" min="0" value="100000"></label>
+      <label>Interest % / year<input id="nt-emi-r" type="number" min="0" step="0.1" value="10.5"></label>
+      <label>Tenure (months)<input id="nt-emi-n" type="number" min="1" value="24"></label>
+    </div>
+    <div class="nt-out3">
+      <div class="nt-out"><span>Monthly EMI</span><strong id="nt-emi-emi">—</strong></div>
+      <div class="nt-out"><span>Total interest</span><strong id="nt-emi-int">—</strong></div>
+      <div class="nt-out"><span>Total payment</span><strong id="nt-emi-tot">—</strong></div>
+    </div>
+    <div class="nt-mixwrap"><div class="nt-mix nt-mixp" id="nt-emi-mixp"></div><div class="nt-mix nt-mixi" id="nt-emi-mixi"></div></div>
+    <div class="nt-legend">
+      <span><i class="nt-key nt-keyp"></i>principal</span>
+      <span><i class="nt-key nt-keyi"></i>interest</span>
+    </div>
+    <h3 class="nt-h3">Year-wise amortization</h3>
+    <div class="nt-tablewrap"><table class="nt-table" id="nt-emi-table"></table></div>
+  </section>
+
+  <section class="nt-card nt-tool" id="nt-cur">
+    <h2>Currency converter</h2>
+    <p class="nt-note" id="nt-cur-note">loading live INR rates from denelli-api…</p>
+    <div class="nt-row3">
+      <label>Amount<input id="nt-cur-amt" type="number" min="0" step="0.01" value="1000"></label>
+      <label>From<select id="nt-cur-from"></select></label>
+      <label>To<select id="nt-cur-to"></select></label>
+    </div>
+    <div class="nt-big" id="nt-cur-out">—</div>
+    <div class="nt-rate" id="nt-cur-rate"></div>
+  </section>
+
+  <section class="nt-card nt-tool" id="nt-split">
+    <h2>Bill splitter</h2>
+    <div class="nt-row3">
+      <label>Bill amount ₹<input id="nt-sp-amt" type="number" min="0" step="0.01" value="1200"></label>
+      <label>Tip %<input id="nt-sp-tip" type="number" min="0" step="1" value="5"></label>
+      <label>People<input id="nt-sp-n" type="number" min="1" step="1" value="4"></label>
+    </div>
+    <div class="nt-out3">
+      <div class="nt-out"><span>Each pays</span><strong id="nt-sp-each">—</strong></div>
+      <div class="nt-out"><span>Tip total</span><strong id="nt-sp-tipt">—</strong></div>
+      <div class="nt-out"><span>Grand total</span><strong id="nt-sp-tot">—</strong></div>
+    </div>
+  </section>
+
+  <section class="nt-card nt-tool" id="nt-age">
+    <h2>Age calculator</h2>
+    <div class="nt-row3">
+      <label>Date of birth<input id="nt-age-dob" type="date" value="2002-03-12"></label>
+    </div>
+    <div class="nt-out3">
+      <div class="nt-out"><span>Age</span><strong id="nt-age-main">—</strong></div>
+      <div class="nt-out"><span>Total days</span><strong id="nt-age-days">—</strong></div>
+      <div class="nt-out"><span>Born on</span><strong id="nt-age-wd">—</strong></div>
+    </div>
+    <p class="nt-note" id="nt-age-next"></p>
+  </section>
+
+  <section class="nt-card nt-tool" id="nt-unit">
+    <h2>Unit converter</h2>
+    <div class="nt-row3">
+      <label>Type<select id="nt-un-cat">
+        <option value="length">Length</option>
+        <option value="weight">Weight</option>
+        <option value="temp">Temperature</option>
+      </select></label>
+      <label>From<select id="nt-un-from"></select></label>
+      <label>To<select id="nt-un-to"></select></label>
+    </div>
+    <div class="nt-row3">
+      <label>Value<input id="nt-un-val" type="number" step="any" value="1"></label>
+    </div>
+    <div class="nt-big" id="nt-un-out">—</div>
+  </section>
+
+</main>
+
+<footer class="nt-foot">
+  <div class="nt-logo nt-logosm">N</div>
+  <p>Nelli Tools &middot; currency data from <a href="https://shamilhabeebnelli.github.io/denelli-api/">denelli-api</a> &middot; &copy; 2026 denelli &middot; copyright strictly prohibited</p>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
