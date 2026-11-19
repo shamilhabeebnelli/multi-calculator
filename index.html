@@ -6,7 +6,7 @@
 <title>Nelli Tools — EMI, currency, split, age, units</title>
 <meta name="description" content="Free tools: EMI calculator with amortization, live INR currency converter, bill splitter, age calculator, unit converter.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%236d28d9'/%3E%3Ctext x='32' y='44' font-size='36' font-family='Arial' font-weight='bold' fill='white' text-anchor='middle'%3EN%3C/text%3E%3C/svg%3E">
-<link rel="stylesheet" href="style.css?v=2">
+<link rel="stylesheet" href="style.css?v=3">
 </head>
 <body>
 <header class="nt-top">
@@ -25,6 +25,7 @@
   <button class="nt-tab" data-nttool="split">Bill split</button>
   <button class="nt-tab" data-nttool="age">Age</button>
   <button class="nt-tab" data-nttool="unit">Units</button>
+  <button class="nt-tab" data-nttool="ac">AC size</button>
 </nav>
 
 <main class="nt-main">
@@ -36,11 +37,24 @@
       <label>Interest % / year<input id="nt-emi-r" type="number" min="0" step="0.1" value="10.5"></label>
       <label>Tenure (months)<input id="nt-emi-n" type="number" min="1" value="24"></label>
     </div>
+    <div class="nt-row3">
+      <label>Service charge ₹<input id="nt-emi-sc" type="number" min="0" value="0"></label>
+      <label>DBD ₹<input id="nt-emi-dbd" type="number" min="0" value="0"></label>
+      <label>Processing charge ₹<input id="nt-emi-pc" type="number" min="0" value="0"></label>
+      <label>Card charge ₹<input id="nt-emi-cc" type="number" min="0" value="0"></label>
+      <label>Insurance ₹ (in EMI)<input id="nt-emi-ins" type="number" min="0" value="0"></label>
+    </div>
+    <p class="nt-note">SC, DBD, processing and card charges add to the downpayment. Insurance is financed: added to the loan, so it spreads across the EMI.</p>
     <div class="nt-out3">
       <div class="nt-out"><span>Monthly EMI</span><strong id="nt-emi-emi">—</strong></div>
       <div class="nt-out"><span>Total interest</span><strong id="nt-emi-int">—</strong></div>
       <div class="nt-out"><span>Total payment</span><strong id="nt-emi-tot">—</strong></div>
     </div>
+    <div class="nt-out3 nt-out3b">
+      <div class="nt-out"><span>Downpayment (SC+DBD+PC+CC)</span><strong id="nt-emi-up">—</strong></div>
+      <div class="nt-out"><span>Loan incl. insurance</span><strong id="nt-emi-loan">—</strong></div>
+    </div>
+    <button class="nt-btn" id="nt-emi-pdf" type="button">Save as PDF</button>
     <div class="nt-mixwrap"><div class="nt-mix nt-mixp" id="nt-emi-mixp"></div><div class="nt-mix nt-mixi" id="nt-emi-mixi"></div></div>
     <div class="nt-legend">
       <span><i class="nt-key nt-keyp"></i>principal</span>
@@ -106,6 +120,24 @@
     <div class="nt-big" id="nt-un-out">—</div>
   </section>
 
+  <section class="nt-card nt-tool" id="nt-ac">
+    <h2>Room size &amp; AC fit</h2>
+    <div class="nt-row3">
+      <label>Length<input id="nt-ac-l" type="number" min="0" step="any" value="12"></label>
+      <label>Width<input id="nt-ac-w" type="number" min="0" step="any" value="10"></label>
+      <label>Measured in<select id="nt-ac-unit">
+        <option value="ft">feet</option>
+        <option value="m">metres</option>
+      </select></label>
+    </div>
+    <div class="nt-out3">
+      <div class="nt-out"><span>Room area</span><strong id="nt-ac-area">—</strong></div>
+      <div class="nt-out"><span>Suggested AC</span><strong id="nt-ac-ton">—</strong></div>
+      <div class="nt-out"><span>Cooling need</span><strong id="nt-ac-btu">—</strong></div>
+    </div>
+    <p class="nt-note" id="nt-ac-note"></p>
+  </section>
+
 </main>
 
 <footer class="nt-foot">
@@ -113,6 +145,6 @@
   <p>Nelli Tools &middot; currency data from <a href="https://shamilhabeebnelli.github.io/denelli-api/">denelli-api</a> &middot; &copy; 2026 denelli &middot; copyright strictly prohibited</p>
 </footer>
 
-<script src="app.js?v=2"></script>
+<script src="app.js?v=3"></script>
 </body>
 </html>
