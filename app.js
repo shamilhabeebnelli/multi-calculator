@@ -1,4 +1,4 @@
-/* Nelli Tools — EMI, currency (via denelli-api), bill split, age, units. */
+/* Nelli Tools — EMI, currency (via kerala-nelli-api), bill split, age, units. */
 (function () {
   "use strict";
   function $(id) { return document.getElementById(id); }
@@ -215,7 +215,7 @@
   }
   function loadRates() {
     var note = $("nt-cur-note");
-    var API = "https://shamilhabeebnelli.github.io/denelli-api/api/v1/currency/inr.json";
+    var API = "https://shamilhabeebnelli.github.io/kerala-nelli-api/api/v1/currency/inr.json";
     function useRates(r, label) {
       rates = r;
       fillCurrencySelects();
@@ -233,7 +233,7 @@
       if (dm) rateDate = dm[1];
       var rebuilt = (json.generated_at || "").replace(/:\d{2} IST$/, " IST");
       try { localStorage.setItem("ntRatesV1", JSON.stringify({ r: r, at: json.generated_at })); } catch (e) {}
-      useRates(r, "latest snapshot · rates dated " + rateDate + " · rebuilt " + (rebuilt || "recently") + " · denelli-api");
+      useRates(r, "latest snapshot · rates dated " + rateDate + " · rebuilt " + (rebuilt || "recently") + " · kerala-nelli-api");
     }).catch(function () {
       var cached = null;
       try { cached = JSON.parse(localStorage.getItem("ntRatesV1") || "null"); } catch (e) {}
