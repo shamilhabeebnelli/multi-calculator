@@ -1,4 +1,4 @@
-/* EMI Calculator — EMI, currency (via keraladaily), bill split, age, units. */
+/* EMI Calculator â EMI, currency (via keraladaily), bill split, age, units. */
 (function () {
   "use strict";
   function $(id) { return document.getElementById(id); }
@@ -58,18 +58,18 @@
   function emiCalc() {
     var inp = emiInputs();
     if (inp.P <= 0 || inp.n <= 0) {
-      $("nt-emi-emi").textContent = "—"; $("nt-emi-int").textContent = "—";
-      $("nt-emi-tot").textContent = "—"; $("nt-emi-table").innerHTML = "";
-      $("nt-emi-up").textContent = "—"; $("nt-emi-loan").textContent = "—";
+      $("nt-emi-emi").textContent = "â"; $("nt-emi-int").textContent = "â";
+      $("nt-emi-tot").textContent = "â"; $("nt-emi-table").innerHTML = "";
+      $("nt-emi-up").textContent = "â"; $("nt-emi-loan").textContent = "â";
       $("nt-emi-mixp").style.width = "0"; $("nt-emi-mixi").style.width = "0";
       return;
     }
     var c = emiCompute(inp.P, inp.annual, inp.n);
-    $("nt-emi-emi").textContent = "₹" + fmt(Math.round(c.emi));
-    $("nt-emi-int").textContent = "₹" + fmt(Math.round(c.interest));
-    $("nt-emi-tot").textContent = "₹" + fmt(Math.round(c.total));
-    $("nt-emi-up").textContent = "₹" + fmt(Math.round(inp.upfront));
-    $("nt-emi-loan").textContent = "₹" + fmt(Math.round(inp.P));
+    $("nt-emi-emi").textContent = "â¹" + fmt(Math.round(c.emi));
+    $("nt-emi-int").textContent = "â¹" + fmt(Math.round(c.interest));
+    $("nt-emi-tot").textContent = "â¹" + fmt(Math.round(c.total));
+    $("nt-emi-up").textContent = "â¹" + fmt(Math.round(inp.upfront));
+    $("nt-emi-loan").textContent = "â¹" + fmt(Math.round(inp.P));
     var pp = c.total > 0 ? (inp.P / c.total) * 100 : 0;
     $("nt-emi-mixp").style.width = pp + "%";
     $("nt-emi-mixi").style.width = (100 - pp) + "%";
@@ -77,8 +77,8 @@
     // year-wise amortization
     var rows = ["<tr><th>Year</th><th>Principal paid</th><th>Interest paid</th><th>Balance</th></tr>"];
     c.rows.forEach(function (rw) {
-      rows.push("<tr><td>" + rw.year + "</td><td>₹" + fmt(Math.round(rw.p)) +
-        "</td><td>₹" + fmt(Math.round(rw.i)) + "</td><td>₹" + fmt(Math.round(rw.bal)) + "</td></tr>");
+      rows.push("<tr><td>" + rw.year + "</td><td>â¹" + fmt(Math.round(rw.p)) +
+        "</td><td>â¹" + fmt(Math.round(rw.i)) + "</td><td>â¹" + fmt(Math.round(rw.bal)) + "</td></tr>");
     });
     $("nt-emi-table").innerHTML = rows.join("");
   }
@@ -87,13 +87,13 @@
   });
 
   /* ---------- EMI PDF ---------- */
-  function pdfMake(lines) {
+  function pdfDoc(ops) {
     function esc(s) { return String(s).replace(/\\/g, "\\\\").replace(/\(/g, "\\(").replace(/\)/g, "\\)"); }
-    var stream = "", y = 800;
-    lines.forEach(function (ln) {
-      var t = ln[0], s = ln[1] || 11, f = ln[2] ? "F2" : "F1";
-      if (t !== "") { stream += "BT /" + f + " " + s + " Tf 50 " + y + " Td (" + esc(t) + ") Tj ET\n"; }
-      y -= Math.round(s * 1.5);
+    var stream = "";
+    ops.forEach(function (op) {
+      if (op[0] === "T") { stream += "BT /" + (op[4] ? "F2" : "F1") + " " + op[2] + " Tf " + op[1] + " " + op[3] + " Td (" + esc(op[5]) + ") Tj ET\n"; }
+      else if (op[0] === "R") { if (op[5] != null) { stream += op[5] + " g " + op[1] + " " + op[2] + " " + op[3] + " " + op[4] + " re f 0 g\n"; } stream += "0.8 w " + op[1] + " " + op[2] + " " + op[3] + " " + op[4] + " re S\n"; }
+      else if (op[0] === "L") { stream += "0.6 w " + op[1] + " " + op[2] + " m " + op[3] + " " + op[4] + " l S\n"; }
     });
     var objs = [null,
       "<< /Type /Catalog /Pages 2 0 R >>",
@@ -122,36 +122,72 @@
     var c = emiCompute(inp.P, inp.annual, inp.n);
     var rs = function (x) { return "Rs " + fmt(Math.round(x)); };
     var when = new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata", day: "numeric", month: "short", year: "numeric", hour: "numeric", minute: "2-digit" });
-    var lines = [
-      ["EMI Calculator - customer quote", 18, 1],
-      ["denelli - " + when + " IST", 9],
-      ["", 8],
-      ["Loan amount: " + rs(inp.base), 11],
-      ["Interest: " + inp.annual + "% per year    Tenure: " + inp.n + " months", 11],
-      ["", 6],
-      ["Charges in downpayment", 12, 1],
-      ["Service charge (SC): " + rs(inp.sc) + "    DBD: " + rs(inp.dbd), 10],
-      ["Processing charge (PC): " + rs(inp.pc) + "    Card charge (CC): " + rs(inp.cc), 10],
-      ["Downpayment total (SC+DBD+PC+CC): " + rs(inp.upfront), 11, 1],
-      ["", 6],
-      ["Insurance (financed, added to EMI): " + rs(inp.ins), 10],
-      ["Loan incl. insurance: " + rs(inp.P), 11],
-      ["", 6],
-      ["Monthly EMI: " + rs(c.emi), 15, 1],
-      ["Total interest: " + rs(c.interest) + "    Total payment: " + rs(c.total), 11],
-      ["", 8],
-      ["Year-wise amortization (on loan incl. insurance)", 11, 1]
-    ];
-    c.rows.forEach(function (rw) {
-      lines.push(["Year " + rw.year + ":  principal " + rs(rw.p) + "   interest " + rs(rw.i) + "   balance " + rs(rw.bal), 10]);
-    });
-    lines.push(["", 6]);
-    lines.push(["Insurance is financed into the loan above. SC, DBD, PC and CC are upfront, not in the EMI.", 8]);
-    lines.push(["Made with EMI Calculator - denelli - copyright strictly prohibited", 8]);
-    var blob = new Blob([pdfMake(lines)], { type: "application/pdf" });
+    var ops = [], L = 40, R = 555, W = R - L;
+    function T(x, size, y, bold, s) { ops.push(["T", x, size, y, bold ? 1 : 0, s]); }
+    function box(yTop, yBot, fill) { ops.push(["R", L, yBot, W, yTop - yBot, fill != null ? fill : null]); }
+    function hline(y, x1, x2) { ops.push(["L", x1 == null ? L : x1, y, x2 == null ? R : x2, y]); }
+    function vline(x, yTop, yBot) { ops.push(["L", x, yTop, x, yBot]); }
+
+    T(L, 16, 806, 1, "EMI Calculator - customer quote");
+    T(L, 9, 790, 0, "denelli - " + when + " IST");
+
+    /* Highlight box: EMI + downpayment, prominent */
+    box(770, 700, 0.96);
+    var mid = L + W / 2;
+    vline(mid, 770, 700);
+    T(L + 12, 8, 754, 0, "MONTHLY EMI");
+    T(L + 12, 20, 722, 1, rs(c.emi));
+    T(mid + 12, 8, 754, 0, "DOWNPAYMENT (UPFRONT)");
+    T(mid + 12, 20, 722, 1, rs(inp.upfront));
+
+    /* Loan details box */
+    box(680, 590, null);
+    ops.push(["R", L, 656, W, 24, 0.90]);
+    T(L + 8, 11, 664, 1, "Loan details");
+    T(L + 8, 10, 638, 0, "Loan amount: " + rs(inp.base));
+    T(L + 8, 10, 622, 0, "Interest: " + inp.annual + "% per year    Tenure: " + inp.n + " months");
+    T(L + 8, 10, 606, 0, "Insurance (financed, added to loan): " + rs(inp.ins) + "    Loan incl. insurance: " + rs(inp.P));
+
+    /* Charges box */
+    box(572, 502, null);
+    ops.push(["R", L, 548, W, 24, 0.90]);
+    T(L + 8, 11, 556, 1, "Charges in downpayment (upfront, not in EMI)");
+    T(L + 8, 10, 530, 0, "Service charge (SC): " + rs(inp.sc) + "    DBD: " + rs(inp.dbd));
+    T(L + 8, 10, 514, 0, "Processing charge (PC): " + rs(inp.pc) + "    Card charge (CC): " + rs(inp.cc));
+
+    /* Totals line */
+    T(L, 11, 482, 1, "Total interest: " + rs(c.interest) + "    Total payment (EMI x " + inp.n + "): " + rs(c.total));
+
+    /* Amortization table with grid */
+    var maxRows = Math.min(c.rows.length, 24);
+    var rowH = 15, tTop = 462, tBot = tTop - rowH * (maxRows + 1);
+    var c0 = L, c1 = L + 60, c2 = L + 225, c3 = L + 390;
+    box(tTop, tBot, null);
+    ops.push(["R", L, tTop - rowH, W, rowH, 0.90]);
+    T(c0 + 6, 9, tTop - 11, 1, "Year");
+    T(c1 + 6, 9, tTop - 11, 1, "Principal paid");
+    T(c2 + 6, 9, tTop - 11, 1, "Interest paid");
+    T(c3 + 6, 9, tTop - 11, 1, "Balance");
+    var y = tTop - rowH;
+    for (var r = 0; r < maxRows; r++) {
+      var rw = c.rows[r];
+      hline(y);
+      T(c0 + 6, 9, y - 11, 0, "Year " + rw.year);
+      T(c1 + 6, 9, y - 11, 0, rs(rw.p));
+      T(c2 + 6, 9, y - 11, 0, rs(rw.i));
+      T(c3 + 6, 9, y - 11, 0, rs(rw.bal));
+      y -= rowH;
+    }
+    vline(c1, tTop, tBot); vline(c2, tTop, tBot); vline(c3, tTop, tBot);
+    var noteY = tBot - 16;
+    if (c.rows.length > maxRows) { T(L, 8, noteY, 0, "Showing first " + maxRows + " of " + c.rows.length + " years; the app shows every year."); noteY -= 12; }
+    T(L, 8, noteY - 4, 0, "Insurance is financed into the loan above. SC, DBD, PC and CC are upfront, not in the EMI.");
+    T(L, 8, noteY - 16, 0, "Made with EMI Calculator - denelli - copyright strictly prohibited");
+
+    var blob = new Blob([pdfDoc(ops)], { type: "application/pdf" });
     var a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
-    a.download = "emi-quote-nelli-tools.pdf";
+    a.download = "emi-quote-emi-calculator.pdf";
     document.body.appendChild(a);
     a.click();
     setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 800);
@@ -165,8 +201,8 @@
     var inM = $("nt-ac-unit").value === "m";
     var sqft = l * w * (inM ? 10.7639 : 1);
     if (sqft <= 0) {
-      $("nt-ac-area").textContent = "—"; $("nt-ac-ton").textContent = "—";
-      $("nt-ac-btu").textContent = "—"; $("nt-ac-note").textContent = "";
+      $("nt-ac-area").textContent = "â"; $("nt-ac-ton").textContent = "â";
+      $("nt-ac-btu").textContent = "â"; $("nt-ac-note").textContent = "";
       return;
     }
     var sqm = sqft / 10.7639;
@@ -177,9 +213,9 @@
     else if (sqft <= 300) { pick = 2; }
     else if (sqft <= 400) { pick = 2.5; }
     else { pick = 3; }
-    $("nt-ac-area").textContent = fmt(Math.round(sqft)) + " sq ft (" + sqm.toFixed(1) + " m²)";
+    $("nt-ac-area").textContent = fmt(Math.round(sqft)) + " sq ft (" + sqm.toFixed(1) + " mÂ²)";
     $("nt-ac-ton").textContent = pick + " ton" + (sqft > 400 ? " (or split units)" : "");
-    $("nt-ac-btu").textContent = "≈" + fmt(pick * 12000) + " BTU/hr";
+    $("nt-ac-btu").textContent = "â" + fmt(pick * 12000) + " BTU/hr";
     $("nt-ac-note").textContent = "Chart: up to 120 sq ft = 1 ton, 120-180 = 1.5 ton, 180-300 = 2 ton (Haier India guide). Go a size up for top floor, harsh sunlight, more than 3 people or heat-making appliances. Floor area alone is not an exact cooling load - confirm with the brand chart before quoting.";
   }
   ["nt-ac-l", "nt-ac-w"].forEach(function (id) { $(id).addEventListener("input", acCalc); });
@@ -201,12 +237,12 @@
     from.value = "INR"; to.value = rates.USD ? "USD" : "INR";
   }
   function curConvert() {
-    if (!rates) { $("nt-cur-out").textContent = "—"; return; }
+    if (!rates) { $("nt-cur-out").textContent = "â"; return; }
     var amt = parseFloat($("nt-cur-amt").value) || 0;
     var f = $("nt-cur-from").value, t = $("nt-cur-to").value;
     var rf = f === "INR" ? 1 : rates[f];
     var rt = t === "INR" ? 1 : rates[t];
-    if (!rf || !rt) { $("nt-cur-out").textContent = "—"; return; }
+    if (!rf || !rt) { $("nt-cur-out").textContent = "â"; return; }
     var inINR = amt / rf;
     var out = inINR * rt;
     $("nt-cur-out").textContent = fmt(out, 4) + " " + t;
@@ -233,14 +269,14 @@
       if (dm) rateDate = dm[1];
       var rebuilt = (json.generated_at || "").replace(/:\d{2} IST$/, " IST");
       try { localStorage.setItem("ntRatesV1", JSON.stringify({ r: r, at: json.generated_at })); } catch (e) {}
-      useRates(r, "latest snapshot · rates dated " + rateDate + " · rebuilt " + (rebuilt || "recently") + " · keraladaily");
+      useRates(r, "latest snapshot Â· rates dated " + rateDate + " Â· rebuilt " + (rebuilt || "recently") + " Â· keraladaily");
     }).catch(function () {
       var cached = null;
       try { cached = JSON.parse(localStorage.getItem("ntRatesV1") || "null"); } catch (e) {}
       if (cached && cached.r) {
-        useRates(cached.r, "offline — showing cached rates from " + (cached.at || "earlier"));
+        useRates(cached.r, "offline â showing cached rates from " + (cached.at || "earlier"));
       } else {
-        note.textContent = "rates unavailable right now — check your connection and reload";
+        note.textContent = "rates unavailable right now â check your connection and reload";
       }
     });
   }
@@ -255,9 +291,9 @@
     var n = parseInt($("nt-sp-n").value, 10) || 1;
     var tipAmt = amt * tip / 100;
     var tot = amt + tipAmt;
-    $("nt-sp-each").textContent = "₹" + fmt(Math.ceil(tot / n));
-    $("nt-sp-tipt").textContent = "₹" + fmt(Math.round(tipAmt));
-    $("nt-sp-tot").textContent = "₹" + fmt(Math.round(tot));
+    $("nt-sp-each").textContent = "â¹" + fmt(Math.ceil(tot / n));
+    $("nt-sp-tipt").textContent = "â¹" + fmt(Math.round(tipAmt));
+    $("nt-sp-tot").textContent = "â¹" + fmt(Math.round(tot));
   }
   ["nt-sp-amt", "nt-sp-tip", "nt-sp-n"].forEach(function (id) {
     $(id).addEventListener("input", splitCalc);
@@ -270,7 +306,7 @@
     var dob = new Date(v + "T00:00:00");
     var now = new Date();
     if (isNaN(dob) || dob > now) {
-      $("nt-age-main").textContent = "—"; return;
+      $("nt-age-main").textContent = "â"; return;
     }
     var y = now.getFullYear() - dob.getFullYear();
     var m = now.getMonth() - dob.getMonth();
@@ -314,7 +350,7 @@
     var cat = $("nt-un-cat").value;
     var f = $("nt-un-from").value, t = $("nt-un-to").value;
     var v = parseFloat($("nt-un-val").value);
-    if (isNaN(v)) { $("nt-un-out").textContent = "—"; return; }
+    if (isNaN(v)) { $("nt-un-out").textContent = "â"; return; }
     var out;
     if (cat === "temp") { out = fromC(toC(v, f), t); }
     else { out = v * UNITS[cat][f] / UNITS[cat][t]; }
