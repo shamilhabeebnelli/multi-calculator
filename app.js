@@ -18,35 +18,30 @@
   });
 
   /* ---------- EMI ---------- */
-  function emiCalc() {
-    var P = parseFloat($("nt-emi-p").value) || 0;
-    var annual = parseFloat($("nt-emi-r").value) || 0;
-    var n = parseInt($("nt-emi-n").value, 10) || 0;
-    if (P <= 0 || n <= 0) {
-      $("nt-emi-emi").textContent = "—"; $("nt-emi-int").textContent = "—";
-      $("nt-emi-tot").textContent = "—"; $("nt-emi-table").innerHTML = "";
-      $("nt-emi-mixp").style.width = "0"; $("nt-emi-mixi").style.width = "0";
-      return;
-    }
-    var r = annual / 1200;
-    var emi;
+  function emiInputs() {
+    var base = parseFloat($("nt-emi-p").value) || 0;
+    var ins = parseFloat($("nt-emi-ins").value) || 0;
+    var sc = parseFloat($("nt-emi-sc").value) || 0;
+    var dbd = parseFloat($("nt-emi-dbd").value) || 0;
+    var pc = parseFloat($("nt-emi-pc").value) || 0;
+    var cc = parseFloat($("nt-emi-cc").value) || 0;
+    return {
+      base: base, ins: ins, sc: sc, dbd: dbd, pc: pc, cc: cc,
+      upfront: sc + dbd + pc + cc,
+      P: base + ins,
+      annual: parseFloat($("nt-emi-r").value) || 0,
+      n: parseInt($("nt-emi-n").value, 10) || 0
+    };
+  }
+  function emiCompute(P, annual, n) {
+    var r = annual / 1200, emi;
     if (r === 0) { emi = P / n; }
     else {
       var f = Math.pow(1 + r, n);
       emi = P * r * f / (f - 1);
     }
     var total = emi * n;
-    var interest = total - P;
-    $("nt-emi-emi").textContent = "₹" + fmt(Math.round(emi));
-    $("nt-emi-int").textContent = "₹" + fmt(Math.round(interest));
-    $("nt-emi-tot").textContent = "₹" + fmt(Math.round(total));
-    var pp = total > 0 ? (P / total) * 100 : 0;
-    $("nt-emi-mixp").style.width = pp + "%";
-    $("nt-emi-mixi").style.width = (100 - pp) + "%";
-
-    // year-wise amortization
-    var bal = P, rows = ["<tr><th>Year</th><th>Principal paid</th><th>Interest paid</th><th>Balance</th></tr>"];
-    var year = 1, yP = 0, yI = 0;
+    var rows = [], bal = P, year = 1, yP = 0, yI = 0;
     for (var m = 1; m <= n; m++) {
       var intPart = bal * r;
       var prinPart = emi - intPart;
@@ -54,16 +49,141 @@
       bal -= prinPart;
       yP += prinPart; yI += intPart;
       if (m % 12 === 0 || m === n) {
-        rows.push("<tr><td>" + year + "</td><td>₹" + fmt(Math.round(yP)) +
-          "</td><td>₹" + fmt(Math.round(yI)) + "</td><td>₹" + fmt(Math.round(Math.max(bal, 0))) + "</td></tr>");
+        rows.push({ year: year, p: yP, i: yI, bal: Math.max(bal, 0) });
         year++; yP = 0; yI = 0;
       }
     }
+    return { emi: emi, total: total, interest: total - P, rows: rows };
+  }
+  function emiCalc() {
+    var inp = emiInputs();
+    if (inp.P <= 0 || inp.n <= 0) {
+      $("nt-emi-emi").textContent = "—"; $("nt-emi-int").textContent = "—";
+      $("nt-emi-tot").textContent = "—"; $("nt-emi-table").innerHTML = "";
+      $("nt-emi-up").textContent = "—"; $("nt-emi-loan").textContent = "—";
+      $("nt-emi-mixp").style.width = "0"; $("nt-emi-mixi").style.width = "0";
+      return;
+    }
+    var c = emiCompute(inp.P, inp.annual, inp.n);
+    $("nt-emi-emi").textContent = "₹" + fmt(Math.round(c.emi));
+    $("nt-emi-int").textContent = "₹" + fmt(Math.round(c.interest));
+    $("nt-emi-tot").textContent = "₹" + fmt(Math.round(c.total));
+    $("nt-emi-up").textContent = "₹" + fmt(Math.round(inp.upfront));
+    $("nt-emi-loan").textContent = "₹" + fmt(Math.round(inp.P));
+    var pp = c.total > 0 ? (inp.P / c.total) * 100 : 0;
+    $("nt-emi-mixp").style.width = pp + "%";
+    $("nt-emi-mixi").style.width = (100 - pp) + "%";
+
+    // year-wise amortization
+    var rows = ["<tr><th>Year</th><th>Principal paid</th><th>Interest paid</th><th>Balance</th></tr>"];
+    c.rows.forEach(function (rw) {
+      rows.push("<tr><td>" + rw.year + "</td><td>₹" + fmt(Math.round(rw.p)) +
+        "</td><td>₹" + fmt(Math.round(rw.i)) + "</td><td>₹" + fmt(Math.round(rw.bal)) + "</td></tr>");
+    });
     $("nt-emi-table").innerHTML = rows.join("");
   }
-  ["nt-emi-p", "nt-emi-r", "nt-emi-n"].forEach(function (id) {
+  ["nt-emi-p", "nt-emi-r", "nt-emi-n", "nt-emi-sc", "nt-emi-dbd", "nt-emi-pc", "nt-emi-cc", "nt-emi-ins"].forEach(function (id) {
     $(id).addEventListener("input", emiCalc);
   });
+
+  /* ---------- EMI PDF ---------- */
+  function pdfMake(lines) {
+    function esc(s) { return String(s).replace(/\\/g, "\\\\").replace(/\(/g, "\\(").replace(/\)/g, "\\)"); }
+    var stream = "", y = 800;
+    lines.forEach(function (ln) {
+      var t = ln[0], s = ln[1] || 11, f = ln[2] ? "F2" : "F1";
+      if (t !== "") { stream += "BT /" + f + " " + s + " Tf 50 " + y + " Td (" + esc(t) + ") Tj ET\n"; }
+      y -= Math.round(s * 1.5);
+    });
+    var objs = [null,
+      "<< /Type /Catalog /Pages 2 0 R >>",
+      "<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
+      "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 4 0 R /F2 6 0 R >> >> /Contents 5 0 R >>",
+      "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>",
+      "<< /Length " + stream.length + " >>\nstream\n" + stream + "endstream",
+      "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>"
+    ];
+    var pdf = "%PDF-1.4\n", offsets = [0];
+    for (var i = 1; i <= 6; i++) {
+      offsets[i] = pdf.length;
+      pdf += i + " 0 obj\n" + objs[i] + "\nendobj\n";
+    }
+    var xref = pdf.length;
+    pdf += "xref\n0 7\n0000000000 65535 f \n";
+    for (i = 1; i <= 6; i++) {
+      pdf += ("0000000000" + offsets[i]).slice(-10) + " 00000 n \n";
+    }
+    pdf += "trailer\n<< /Size 7 /Root 1 0 R >>\nstartxref\n" + xref + "\n%%EOF";
+    return pdf;
+  }
+  function emiPdf() {
+    var inp = emiInputs();
+    if (inp.P <= 0 || inp.n <= 0) { return; }
+    var c = emiCompute(inp.P, inp.annual, inp.n);
+    var rs = function (x) { return "Rs " + fmt(Math.round(x)); };
+    var when = new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata", day: "numeric", month: "short", year: "numeric", hour: "numeric", minute: "2-digit" });
+    var lines = [
+      ["Nelli Tools - EMI quote", 18, 1],
+      ["denelli - " + when + " IST", 9],
+      ["", 8],
+      ["Loan amount: " + rs(inp.base), 11],
+      ["Interest: " + inp.annual + "% per year    Tenure: " + inp.n + " months", 11],
+      ["", 6],
+      ["Charges in downpayment", 12, 1],
+      ["Service charge (SC): " + rs(inp.sc) + "    DBD: " + rs(inp.dbd), 10],
+      ["Processing charge (PC): " + rs(inp.pc) + "    Card charge (CC): " + rs(inp.cc), 10],
+      ["Downpayment total (SC+DBD+PC+CC): " + rs(inp.upfront), 11, 1],
+      ["", 6],
+      ["Insurance (financed, added to EMI): " + rs(inp.ins), 10],
+      ["Loan incl. insurance: " + rs(inp.P), 11],
+      ["", 6],
+      ["Monthly EMI: " + rs(c.emi), 15, 1],
+      ["Total interest: " + rs(c.interest) + "    Total payment: " + rs(c.total), 11],
+      ["", 8],
+      ["Year-wise amortization (on loan incl. insurance)", 11, 1]
+    ];
+    c.rows.forEach(function (rw) {
+      lines.push(["Year " + rw.year + ":  principal " + rs(rw.p) + "   interest " + rs(rw.i) + "   balance " + rs(rw.bal), 10]);
+    });
+    lines.push(["", 6]);
+    lines.push(["Insurance is financed into the loan above. SC, DBD, PC and CC are upfront, not in the EMI.", 8]);
+    lines.push(["Made with Nelli Tools - denelli - copyright strictly prohibited", 8]);
+    var blob = new Blob([pdfMake(lines)], { type: "application/pdf" });
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "emi-quote-nelli-tools.pdf";
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 800);
+  }
+  $("nt-emi-pdf").addEventListener("click", emiPdf);
+
+  /* ---------- Room size & AC ---------- */
+  function acCalc() {
+    var l = parseFloat($("nt-ac-l").value) || 0;
+    var w = parseFloat($("nt-ac-w").value) || 0;
+    var inM = $("nt-ac-unit").value === "m";
+    var sqft = l * w * (inM ? 10.7639 : 1);
+    if (sqft <= 0) {
+      $("nt-ac-area").textContent = "—"; $("nt-ac-ton").textContent = "—";
+      $("nt-ac-btu").textContent = "—"; $("nt-ac-note").textContent = "";
+      return;
+    }
+    var sqm = sqft / 10.7639;
+    // Sizing chart from Haier India's guide: up to 120 sq ft = 1 ton, 120-180 = 1.5 ton, 180-300 = 2 ton; extended above that.
+    var pick;
+    if (sqft <= 120) { pick = 1; }
+    else if (sqft <= 180) { pick = 1.5; }
+    else if (sqft <= 300) { pick = 2; }
+    else if (sqft <= 400) { pick = 2.5; }
+    else { pick = 3; }
+    $("nt-ac-area").textContent = fmt(Math.round(sqft)) + " sq ft (" + sqm.toFixed(1) + " m²)";
+    $("nt-ac-ton").textContent = pick + " ton" + (sqft > 400 ? " (or split units)" : "");
+    $("nt-ac-btu").textContent = "≈" + fmt(pick * 12000) + " BTU/hr";
+    $("nt-ac-note").textContent = "Chart: up to 120 sq ft = 1 ton, 120-180 = 1.5 ton, 180-300 = 2 ton (Haier India guide). Go a size up for top floor, harsh sunlight, more than 3 people or heat-making appliances. Floor area alone is not an exact cooling load - confirm with the brand chart before quoting.";
+  }
+  ["nt-ac-l", "nt-ac-w"].forEach(function (id) { $(id).addEventListener("input", acCalc); });
+  $("nt-ac-unit").addEventListener("change", acCalc);
 
   /* ---------- Currency ---------- */
   var rates = null; // {CODE: one_inr_buys}
@@ -209,6 +329,7 @@
 
   /* ---------- init ---------- */
   emiCalc();
+  acCalc();
   loadRates();
   splitCalc();
   ageCalc();
