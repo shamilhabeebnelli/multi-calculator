@@ -1,5 +1,7 @@
 # Multi Calculator
 
+<p><a href="https://multicalculator.denelli.in/"><img src="logo.svg" width="96" alt="Multi Calculator logo"></a></p>
+
 Free client-side calculators and converters. No account, no server, no cost.
 
 **Live:** https://multicalculator.denelli.in/
