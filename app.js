@@ -1,4 +1,4 @@
-/* EMI Calculator â EMI, currency (via keraladaily), bill split, age, units. */
+/* Multi Calculator - EMI, currency (via keraladaily), bill split, age, units, AC. */
 (function () {
   "use strict";
   function $(id) { return document.getElementById(id); }
@@ -128,7 +128,7 @@
     function hline(y, x1, x2) { ops.push(["L", x1 == null ? L : x1, y, x2 == null ? R : x2, y]); }
     function vline(x, yTop, yBot) { ops.push(["L", x, yTop, x, yBot]); }
 
-    T(L, 16, 806, 1, "EMI Calculator - customer quote");
+    T(L, 16, 806, 1, "Multi Calculator - EMI quote");
     T(L, 9, 790, 0, "denelli - " + when + " IST");
 
     /* Highlight box: EMI + downpayment, prominent */
@@ -182,12 +182,12 @@
     var noteY = tBot - 16;
     if (c.rows.length > maxRows) { T(L, 8, noteY, 0, "Showing first " + maxRows + " of " + c.rows.length + " years; the app shows every year."); noteY -= 12; }
     T(L, 8, noteY - 4, 0, "Insurance is financed into the loan above. SC, DBD, PC and CC are upfront, not in the EMI.");
-    T(L, 8, noteY - 16, 0, "Made with EMI Calculator - denelli - copyright strictly prohibited");
+    T(L, 8, noteY - 16, 0, "Made with Multi Calculator - denelli - copyright strictly prohibited");
 
     var blob = new Blob([pdfDoc(ops)], { type: "application/pdf" });
     var a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
-    a.download = "emi-quote-emi-calculator.pdf";
+    a.download = "emi-quote-multi-calculator.pdf";
     document.body.appendChild(a);
     a.click();
     setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 800);
