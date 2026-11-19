@@ -1,9 +1,8 @@
-# EMI Calculator
+# Multi Calculator
 
 Free client-side calculators and converters. No account, no server, no cost.
 
 **Live:** https://multicalculator.denelli.in/
-Mirror: https://shamilhabeebnelli.github.io/emi-calculator/
 
 ## Tools
 
