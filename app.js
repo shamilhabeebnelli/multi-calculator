@@ -229,7 +229,7 @@
       var r = { INR: 1 };
       Object.keys(json.data.rates).forEach(function (k) { r[k] = json.data.rates[k].one_inr_buys; });
       var rateDate = "date unknown";
-      var dm = /(\d{1,2} \w{3} \d{4})/.exec(json.source_date || "");
+      var dm = /(\d{1,2} \w{3} \d{4})/.exec(json.source_date || (json.data && json.data.source_date) || "");
       if (dm) rateDate = dm[1];
       var rebuilt = (json.generated_at || "").replace(/:\d{2} IST$/, " IST");
       try { localStorage.setItem("ntRatesV1", JSON.stringify({ r: r, at: json.generated_at })); } catch (e) {}
