@@ -116,3 +116,7 @@ input:focus, select:focus { border-color: var(--nt-b); }
 @media (max-width: 620px) {
   .nt-row3, .nt-out3, .nt-out3.nt-out3b { grid-template-columns: 1fr; }
 }
+
+/* header/footer logo image (calculator mark) */
+img.nt-logo { background: none; display: block; object-fit: cover; border-radius: 11px; }
+img.nt-logosm { border-radius: 7px; }
